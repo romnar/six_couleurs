@@ -16,12 +16,14 @@ public class ConsoleGame {
 		System.out.println();
 		System.out.println("Saisissez le nombre de joueur: ");
 		int nbPlayer = s.nextInt();
+		this.m.setNbPlayer(nbPlayer);
 		
 		Joueur[] joueurs = new Joueur[nbPlayer];
 		for (int i = 0; i<nbPlayer; i++) {
 			j = new Joueur(i+1);
 			joueurs[i] = j;
 		}
+		
 		this.m.setJoueurs(joueurs);
 
 		System.out.println("Saisissez la longueur du damier: ");
@@ -64,22 +66,4 @@ public class ConsoleGame {
 		System.out.println("Cette couleur a déja été jouée !");
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

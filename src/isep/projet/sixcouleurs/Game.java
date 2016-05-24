@@ -35,217 +35,104 @@ public class Game {
 		}
 	}
 
-	public void initGrille() {										//TODO "init" est pour une fonction que l'on lance une unique fois au début du programme. Changer le nom (pour "update" si ça colle) ou changer la fonction
+	public void initGrille() {										
 		for (int j=0;j<ySize;j++){
 			for (int i=0;i<xSize;i++){
 				grille[i][j].setJoueur(null);
 			}
 		}
-		//joueurs[numPlayer-1].setNbCase(0);
 	}
 	
-	public void play(int numPlayer, int color, Joueur[] joueurs) {				//TODO changer les "if (numPlayer == x)" par une fonction de Joueur qui renvoie les coordonnées de la case de départ de chaque joueur
+	public void test(int i, int x, int y) {
+		joueurs[i].setColor(grille[x][y].getColor());
+		grille[x][y].setMajuscule(joueurs[i].getColor());
+		analyseAdj(x, y, joueurs[i].getColor(),1);
+	}
+	
+	public void initPlayer(int nbPlayer) {
+		joueurs[0].setColor(grille[0][0].getColor());
+		grille[0][0].setMajuscule(joueurs[0].getColor());
+		analyseAdj(0, 0, joueurs[0].getColor(),1);
+		joueurs[1].setColor(grille[xSize - 1][ySize - 1].getColor());
+		grille[xSize - 1][ySize - 1].setMajuscule(joueurs[1].getColor());
+		analyseAdj(xSize - 1, ySize - 1, joueurs[1].getColor(),2);
+		if(nbPlayer > 2) {
+			joueurs[2].setColor(grille[xSize - 1][0].getColor());
+			grille[xSize - 1][0].setMajuscule(joueurs[2].getColor());
+			analyseAdj(xSize - 1, 0, joueurs[1].getColor(),3);
+		}
+		if(nbPlayer > 3) {
+			joueurs[3].setColor(grille[0][ySize - 1].getColor());
+			grille[0][ySize - 1].setMajuscule(joueurs[3].getColor());
+			analyseAdj(0, ySize - 1, joueurs[1].getColor(),4);
+		}
+	}
+	
+	public void play(int numPlayer, int color) {								//TODO changer les "if (numPlayer == x)" par une fonction de Joueur qui renvoie les coordonnées de la case de départ de chaque joueur
 		
-		int xP = 0,yP = 0, oldColor = 0;
-		//initGrille(numPlayer);
+		int xP = 0,yP = 0 /*oldColor = 0*/;
 		if (numPlayer == 1) {
-		/**
-		 * on mémorise la position du joueur 1.
-		 */
 			xP = 0;
 			yP = 0;			
 		}
 	   
 	   else if (numPlayer == 2) {
-		   /**
-		    * on mémorise la position du joueur 2.
-		    */
 		   xP = xSize - 1;
 		   yP = ySize - 1;
 	   }
 	  
 	   else if (numPlayer == 3) {
-		   /**
-		    * on mémorise la position du joueur 3.
-		    */
 		   xP = xSize - 1;
 		   yP = 0;
 	   }
 	   
 	   else if (numPlayer == 4) {
-	      /**
-	       * on mémorise la position du joueur 4.
-	       */
 	      xP = 0;
 	      yP = ySize - 1;
 	   }
 	   
-	   oldColor = grille[xP][yP].getColor();
+	  // oldColor = grille[xP][yP].getColor();
 	   grille[xP][yP].setColor(color);              	//on remplace la couleur de la case de depart
-	   grille[xP][yP].setMajuscule(color);//on mémorise l’ancienne couleur de la case de depart
-	   adj(xP,yP,oldColor,color,numPlayer);                       //on explore les cases adjacentes pour trouver les couleurs à remplacer	   
-	   
-	   
-	   //compte(numPlayer, xP,yP,color);								//on compte le nombre de case proprietaires du joueur
+	   grille[xP][yP].setMajuscule(color);				//on mémorise l’ancienne couleur de la case de depart
+	   adj(xP,yP,color,numPlayer);             			//on explore les cases adjacentes pour trouver les couleurs à remplacer	   
+	   joueurs[numPlayer - 1].setColor(color);
 	   if (joueurs[numPlayer-1].getNbCase() == 0) joueurs[numPlayer-1].incrNbCase();
 	} 
 	
-	private void adj(int xP, int yP, int oldColor, int newColor, int numPlayer) {
-		if (xP > 0) {
-			/**
-			 *  on examine la case de gauche si elle existe si on est jamais passé et si elle a l'ancienne couleur
-			 */
-			analyseAdj(xP - 1, yP, oldColor, newColor,numPlayer);
-		}
-		if (xP+1 < xSize) {
-			/**
-			 *  on examine la case de droite si elle existe si on est jamais passé et si elle a l'ancienne couleur
-			 */
-			analyseAdj(xP + 1, yP, oldColor, newColor,numPlayer);
-		}
-		
-		/**
-		 * pour s’assurer qu’on reste à l’interieur de la grille en Y.
-		 */
-		if (yP > 0) {  
-			/**
-			 * on examine la case d'en haut si elle existe si on est jamais passé et si elle a l'ancienne couleur
-			 */
-			analyseAdj(xP, yP - 1, oldColor, newColor,numPlayer);
-		}
-		if (yP+1 < ySize) {  
-			/**
-			 * on examine la case d'en haut si elle existe si on est jamais passé et si elle a l'ancienne couleur
-			 */
-			analyseAdj(xP, yP + 1, oldColor, newColor,numPlayer);
-		}
+	private void adj(int xP, int yP, int newColor, int numPlayer) {
+		if (xP > 0)
+			analyseAdj(xP - 1, yP, newColor,numPlayer);
+		if (xP+1 < xSize)
+			analyseAdj(xP + 1, yP, newColor,numPlayer);
+		if (yP > 0)
+			analyseAdj(xP, yP - 1, newColor,numPlayer);
+		if (yP+1 < ySize)
+			analyseAdj(xP, yP + 1, newColor,numPlayer);
 	}
 	
-	private void analyseAdj(int x, int y,int oldColor, int newColor, int numPlayer) {
-		if (grille[x][y].getJoueur() == null) {
-			if (grille[x][y].getColor() == newColor) {
-				grille[x][y].setColor(newColor); // dans ce cas on peut changer de couleur
+	private void analyseAdj(int x, int y, int newColor, int numPlayer) {
+		if (grille[x][y].getJoueur() == null && grille[x][y].getColor() == newColor) {
+				grille[x][y].setColor(newColor); 
 				grille[x][y].setMajuscule(newColor);
 				grille[x][y].setJoueur(joueurs[numPlayer-1]);		
 				joueurs[numPlayer-1].incrNbCase();
-				  	//puis on continue à explorer les cases adjacentes à gauche par récursivité
-				adj(x, y, oldColor, newColor,numPlayer);
-			}
+				adj(x, y, newColor,numPlayer);
 		}
 		
-		else{
-			System.out.println(grille[x][y].getJoueur()== joueurs[numPlayer-1]);
-			System.out.println(grille[x][y].getColor()!=newColor);
-			System.out.println(newColor);
-			if(grille[x][y].getJoueur() == joueurs[numPlayer-1] && grille[x][y].getColor()!=newColor){
-				grille[x][y].setColor(newColor);
-				grille[x][y].setMajuscule(newColor);
-				adj(x, y, oldColor, newColor,numPlayer);
-			}
+		
+		else if(grille[x][y].getJoueur() == joueurs[numPlayer-1] && grille[x][y].getColor()!=newColor){
+			grille[x][y].setColor(newColor);
+			grille[x][y].setMajuscule(newColor);
+			adj(x, y, newColor,numPlayer);
 			
-		}
-		
-		
-	}
-	
-	
-	
-	/*private void analyseCompte(int x, int y, int numPlayer, int newColor, Joueur[] joueurs) {
-		if ((grille[x][y].getDejaPasse())) {
-			//puis on continue à explorer les cases adjacentes à gauche par récursivité
-							
-			
-			//compte(numPlayer, x, y, newColor);
-		}
-		
-	}
-	
-	private void compte(int numPlayer, int xP, int yP, int newColor) {
-		
-		if (xP > 0) {
-			
-			 //  on examine la case de gauche si elle existe si on est jamais passé et si elle a la nouvelle couleur
-			 
-			analyseCompte(xP - 1, yP, numPlayer, newColor, joueurs);
-		}
-		if (xP+1 < xSize) {
-			
-			 //  on examine la case de droite si elle existe si on est jamais passé et si elle a la nouvelle couleur
-			 
-			analyseCompte(xP + 1, yP, numPlayer, newColor, joueurs);
-		}
-		
-		
-		 // pour s’assurer qu’on reste à l’interieur de la grille en Y.
-		 
-		if (yP > 0) {  
-			
-			 // on examine la case du haut si elle existe si on est jamais passé et si elle a la nouvelle couleur
-			 
-			analyseCompte(xP, yP - 1, numPlayer, newColor, joueurs);
-		}
-		if (yP+1 < ySize) {  
-			
-			 // on examine la case du bas si elle existe si on est jamais passé et si elle a la nouvelle couleur
-			 
-			analyseCompte(xP, yP + 1, numPlayer, newColor, joueurs);
-		}
-	}*/
-	
-	
+		}		
+	}	
 
-	//TODO change for a 5lines function that does the same
-	public boolean alreadyPlayed(int nbPlayer, int player, int color) {
+	public boolean alreadyPlayed(int color) {
 		boolean b = false;
-		if (nbPlayer == 2) {
-			if (player == 1) {
-				if (grille[xSize-1][ySize-1].getColor() == color) {				//TODO Same than previous ones: might be inverted
-					b = true;
-				}
-			}
-			else if (player == 2) {
-				if (grille[0][0].getColor() == color)  {
-					b = true;		
-				}	
-			}
-		}
-		else if (nbPlayer == 3) {
-			if (player == 1) {
-				if ((grille[xSize-1][ySize-1].getColor()==color)||(grille[xSize-1][0].getColor()==color)) {		//TODO Same than previous ones: might be inverted
-					b = true;
-				}
-			}
-			else if (player == 2) {
-				if ((grille[0][0].getColor()==color)||(grille[xSize-1][0].getColor()==color))  {	//TODO Same than previous ones: might be inverted
-					b = true;		
-				}
-			}
-			else if (player == 3) {
-				if ((grille[0][0].getColor()==color)||(grille[xSize-1][ySize-1].getColor()==color))  {	//TODO Same than previous ones: might be inverted
-					b = true;		
-				}
-			}
-		}
-		else if (nbPlayer == 4) {
-			if (player == 1) {
-				if ((grille[xSize-1][ySize-1].getColor()==color)||(grille[0][ySize-1].getColor()==color)||(grille[xSize-1][0].getColor()==color)) {		//TODO Same than previous ones: might be inverted
-					b = true;
-				}
-			}
-			else if (player == 2) {
-				if ((grille[0][0].getColor()==color)||(grille[0][ySize-1].getColor()==color)||(grille[xSize-1][0].getColor()==color))  {
-					b = true;		
-				}
-			}
-			else if (player == 3) {
-				if ((grille[0][0].getColor()==color)||(grille[xSize-1][ySize-1].getColor()==color)||(grille[0][ySize-1].getColor()==color))  {
-					b = true;		
-				}
-			}
-			else if (player == 4) {
-				if ((grille[0][0].getColor()==color)||(grille[xSize-1][ySize-1].getColor()==color)||(grille[xSize-1][0].getColor()==color))  {
-					b = true;		
-				}
+		for (int i=0;i< joueurs.length && !b;i++) {
+			if (joueurs[i].getColor() == color) {
+				b = true;
 			}
 		}
 		return b;
@@ -274,10 +161,4 @@ public class Game {
 	public static void setySize(int ySize) {
 		Game.ySize = ySize;
 	}
-	
-	
-	
-	
-	
-	
 }

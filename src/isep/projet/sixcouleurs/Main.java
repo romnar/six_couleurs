@@ -1,9 +1,5 @@
 package isep.projet.sixcouleurs;
 
-
-import java.util.Random;
-import java.util.Scanner;
-
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -72,7 +68,7 @@ public class Main extends BasicGame{
 		this.game=new Game(this.xSize,this.ySize,this.joueurs);
 		this.game.Grille();
 		this.game.initGrille();
-		//ADD SETPLAYERCOLOR
+		this.game.initPlayer(getNbPlayer());
 		this.create();
 	}
 	
@@ -83,12 +79,12 @@ public class Main extends BasicGame{
 		for(int i = 1; i <= joueurs.length; i++) {
 			color=this.cG.move(i);
 			
-			while(game.alreadyPlayed(joueurs.length, i, color)) {
+			while(game.alreadyPlayed(color)) {
 				this.cG.colorAlreadyTaken();
 				color=this.cG.move(i);
 			}
 			
-			game.play(i,color, joueurs);
+			game.play(i,color);
 			this.cG.infosPlayer(joueurs[i-1]);
 			if (joueurs[i-1].getNbCase() > (xSize * ySize) / 2) {
 				this.cG.win(i);
@@ -99,18 +95,7 @@ public class Main extends BasicGame{
 	}
 
 	public static void main(String [] args) throws SlickException {
-		/*System.out.println();
-		System.out.println("Saisissez la taille de la grille");
-		int sizeGrille = new Scanner(System.in).nextInt();
-		Main main = new Main(sizeGrille);
-		main.Grille();
-		main.afficheConsole();
-		main.tour(nbPlayer);
-		*/
-		
-		
-		
-		//INTERFACE GRAPHIQUE
+	//INTERFACE GRAPHIQUE
 		
 		try {
             AppGameContainer app = new AppGameContainer(new Main(),956,956,false);
@@ -143,6 +128,14 @@ public class Main extends BasicGame{
 
 	public void setySize(int ySize) {
 		this.ySize = ySize;
+	}
+
+	public void setNbPlayer(int nbPlayer) {
+		this.nbPlayer = nbPlayer;
+	}
+	
+	public int getNbPlayer() {
+		return nbPlayer;
 	}
 	
 	
